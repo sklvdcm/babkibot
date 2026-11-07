@@ -1,4 +1,10 @@
 services:
+  tor:
+    build:
+      context: .
+      dockerfile: Dockerfile.tor
+    restart: unless-stopped
+
   db:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -18,11 +24,11 @@ services:
     build: .
     restart: unless-stopped
     env_file: .env
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     depends_on:
       db:
         condition: service_healthy
+      tor:
+        condition: service_started
     ports:
       - "127.0.0.1:8000:8000"
 
