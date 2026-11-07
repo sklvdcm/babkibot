@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     telegram_bot_token: str
+    telegram_proxy_url: str | None = None
     database_url: str = "postgresql+asyncpg://babkibot:change_me@db:5432/babkibot"
     allowed_telegram_ids: Annotated[set[int], NoDecode] = Field(default_factory=set)
     admin_telegram_ids: Annotated[set[int], NoDecode] = Field(default_factory=set)

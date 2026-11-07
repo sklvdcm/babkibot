@@ -3,6 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from aiogram import Bot, Dispatcher, F, Router
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -379,7 +380,8 @@ async def budget_set(message: Message, settings: Settings) -> None:
 
 
 def create_dispatcher(settings: Settings) -> tuple[Bot, Dispatcher]:
-    bot = Bot(token=settings.telegram_bot_token)
+    session = AiohttpSession(proxy=settings.telegram_proxy_url)
+    bot = Bot(token=settings.telegram_bot_token, session=session)
     dispatcher = Dispatcher()
     dispatcher["settings"] = settings
     dispatcher.include_router(router)
