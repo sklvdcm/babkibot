@@ -1,11 +1,9 @@
 [project]
-name = "babkibot"
-version = "0.1.0"
-description = "Shared monthly budget Telegram bot with an iPhone Shortcuts API"
+name = "babki"
+version = "1.0.0"
+description = "Private expense history and monthly budget web app with an iPhone Shortcuts API"
 requires-python = ">=3.12"
 dependencies = [
-  "aiogram>=3.13,<4",
-  "aiohttp-socks>=0.10,<1",
   "alembic>=1.13,<2",
   "asyncpg>=0.29,<1",
   "fastapi>=0.115,<1",
@@ -41,3 +39,4 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+

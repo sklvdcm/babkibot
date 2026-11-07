@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru" data-color-scheme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Babki</title>
+  <link rel="stylesheet" href="/static/primitives-colors.css">
+  <link rel="stylesheet" href="/static/primitives-layout.css">
+  <link rel="stylesheet" href="/static/primitives-typography.css">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <aside class="rail" aria-label="Разделы">
+    <a class="rail-mark" href="#overview" aria-label="Babki">₽</a>
+    <nav>
+      <a class="nav-link active" href="#overview" data-screen="overview" aria-label="Бюджет" title="Бюджет"><img src="/static/icons/wallet.svg" alt=""></a>
+      <a class="nav-link" href="#history" data-screen="history" aria-label="История" title="История"><img src="/static/icons/history.svg" alt=""></a>
+      <a class="nav-link" href="#settings" data-screen="settings" aria-label="Категории" title="Категории"><img src="/static/icons/gear.svg" alt=""></a>
+    </nav>
+    <button class="rail-logout" id="logout" type="button" title="Выйти" aria-label="Выйти">↗</button>
+  </aside>
+
+  <main class="canvas">
+    <section class="screen active" id="screen-overview" aria-labelledby="overview-title">
+      <header class="title-row">
+        <div>
+          <h1 id="overview-title">Бюджет</h1>
+          <p id="overview-finding">Загружаем данные за месяц</p>
+        </div>
+        <label class="month-control">Месяц <input class="month-input" id="overview-period" type="month"></label>
+      </header>
+      <div class="overview-grid">
+        <section class="balance-panel panel" aria-labelledby="remaining-title">
+          <div>
+            <h2 id="remaining-title">Осталось на месяц</h2>
+            <p class="money-lead num" id="remaining-value">—</p>
+            <p class="muted" id="remaining-note">Из общего лимита</p>
+          </div>
+          <dl class="balance-pairs">
+            <div><dt>Лимит</dt><dd class="num" id="limit-value">—</dd></div>
+            <div><dt>Потрачено</dt><dd class="num" id="spent-value">—</dd></div>
+          </dl>
+        </section>
+        <section class="panel category-plan" aria-labelledby="plan-title">
+          <div class="panel-heading"><h2 id="plan-title">По категориям</h2><a href="#settings" data-go="settings">Изменить лимиты</a></div>
+          <div id="category-plan-list" class="plan-list loading-block" aria-live="polite"></div>
+        </section>
+        <section class="panel recent-panel" aria-labelledby="recent-title">
+          <div class="panel-heading"><h2 id="recent-title">Последние траты</h2><a href="#history" data-go="history">Вся история</a></div>
+          <div id="recent-list" class="recent-list loading-block" aria-live="polite"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-history" aria-labelledby="history-title">
+      <header class="title-row">
+        <div>
+          <h1 id="history-title">История расходов</h1>
+          <p id="history-summary">Все записи за выбранный месяц</p>
+        </div>
+      </header>
+      <div class="filter-row">
+        <label>Месяц <input class="month-input" id="history-period" type="month"></label>
+        <label>Категория <select id="history-category"><option value="">Все категории</option></select></label>
+      </div>
+      <section class="panel history-panel" aria-label="Расходы">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Дата</th><th>Категория</th><th>Кто добавил</th><th class="num">Сумма</th><th><span class="visually-hidden">Действия</span></th></tr></thead>
+            <tbody id="expense-table"></tbody>
+          </table>
+        </div>
+        <div id="history-empty" class="empty-state" hidden>За этот месяц расходов нет.</div>
+      </section>
+    </section>
+
+    <section class="screen settings-screen" id="screen-settings" aria-labelledby="settings-title">
+      <header class="title-row">
+        <div>
+          <h1 id="settings-title">Категории и лимиты</h1>
+          <p>Категории из этого списка появляются в Команде на iPhone.</p>
+        </div>
+        <label class="month-control">Месяц <input class="month-input" id="settings-period" type="month"></label>
+      </header>
+      <div class="settings-section">
+        <div class="settings-copy"><h2>Новая категория</h2><p>Создайте категорию и сразу задайте лимит на текущий месяц.</p></div>
+        <form class="settings-panel" id="category-form">
+          <label>Название <input name="name" maxlength="100" required placeholder="Например, Продукты"></label>
+          <label>Лимит, ₽ <input name="limit" type="number" min="0.01" step="0.01" inputmode="decimal" required></label>
+          <button class="button button-primary" type="submit">Добавить категорию</button>
+        </form>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="settings-section">
+        <div class="settings-copy"><h2>Действующие категории</h2><p>Название и лимит можно изменить. Отключённая категория остаётся в истории, но пропадает с iPhone.</p></div>
+        <div class="settings-panel category-settings" id="category-settings" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Разделы">
+    <a class="bottom-link active" href="#overview" data-screen="overview"><img src="/static/icons/wallet.svg" alt=""><span>Бюджет</span></a>
+    <a class="bottom-link" href="#history" data-screen="history"><img src="/static/icons/history.svg" alt=""><span>История</span></a>
+    <a class="bottom-link" href="#settings" data-screen="settings"><img src="/static/icons/gear.svg" alt=""><span>Категории</span></a>
+  </nav>
+
+  <dialog id="edit-dialog">
+    <form method="dialog" class="dialog-form" id="edit-form">
+      <div class="dialog-heading"><h2>Изменить трату</h2><button class="icon-button" id="close-edit" type="button" aria-label="Закрыть"><img src="/static/icons/x.svg" alt=""></button></div>
+      <input id="edit-id" type="hidden">
+      <label>Сумма, ₽ <input id="edit-amount" type="number" min="0.01" step="0.01" required></label>
+      <label>Категория <select id="edit-category" required></select></label>
+      <label>Дата и время <input id="edit-date" type="datetime-local" required></label>
+      <p class="form-error" id="edit-error" role="alert" hidden></p>
+      <div class="dialog-actions"><button class="button button-danger" id="delete-expense" type="button">Удалить</button><button class="button button-primary" id="save-expense" type="submit" value="default">Сохранить</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

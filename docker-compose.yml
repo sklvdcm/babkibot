@@ -1,21 +1,15 @@
 services:
-  tor:
-    build:
-      context: .
-      dockerfile: Dockerfile.tor
-    restart: unless-stopped
-
   db:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: babkibot
-      POSTGRES_USER: babkibot
+      POSTGRES_DB: ${POSTGRES_DB:-budget}
+      POSTGRES_USER: ${POSTGRES_USER:-budget}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U babkibot -d babkibot"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-budget} -d ${POSTGRES_DB:-budget}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -27,8 +21,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      tor:
-        condition: service_started
     ports:
       - "127.0.0.1:8000:8000"
 

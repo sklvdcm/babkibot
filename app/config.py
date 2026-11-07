@@ -1,29 +1,21 @@
 from functools import lru_cache
-from typing import Annotated
 from zoneinfo import ZoneInfo
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    telegram_bot_token: str
-    telegram_proxy_url: str | None = None
-    database_url: str = "postgresql+asyncpg://babkibot:change_me@db:5432/babkibot"
-    allowed_telegram_ids: Annotated[set[int], NoDecode] = Field(default_factory=set)
-    admin_telegram_ids: Annotated[set[int], NoDecode] = Field(default_factory=set)
+    database_url: str = "postgresql+asyncpg://budget:change_me@db:5432/budget"
     shortcut_tokens: dict[str, str] = Field(default_factory=dict)
+    shortcut_users: dict[str, str] = Field(default_factory=dict)
+    web_password: str = ""
+    web_session_secret: str = ""
+    cookie_secure: bool = True
     timezone: str = "Europe/Moscow"
     log_level: str = "INFO"
-
-    @field_validator("allowed_telegram_ids", "admin_telegram_ids", mode="before")
-    @classmethod
-    def parse_id_list(cls, value: object) -> object:
-        if isinstance(value, str):
-            return {int(item.strip()) for item in value.split(",") if item.strip()}
-        return value
 
     @field_validator("shortcut_tokens")
     @classmethod
@@ -40,4 +32,4 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()  # type: ignore[call-arg]
+    return Settings()

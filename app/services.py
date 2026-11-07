@@ -39,12 +39,15 @@ def parse_amount(raw: str) -> Decimal:
     return amount
 
 
+def month_bounds(moment: datetime) -> tuple[datetime, datetime]:
+    start = moment.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if start.month == 12:
+        return start, start.replace(year=start.year + 1, month=1)
+    return start, start.replace(month=start.month + 1)
+
+
 def active_budget_query(now: datetime) -> Select[tuple[Category, Decimal, Decimal]]:
-    period_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    if now.month == 12:
-        period_end = period_start.replace(year=now.year + 1, month=1)
-    else:
-        period_end = period_start.replace(month=now.month + 1)
+    period_start, period_end = month_bounds(now)
     spent = (
         select(func.coalesce(func.sum(Expense.amount), 0))
         .where(
@@ -74,26 +77,18 @@ async def budget_statuses(session: AsyncSession, now: datetime) -> list[BudgetSt
 
 async def get_or_sync_user(
     session: AsyncSession,
-    telegram_id: int,
+    external_id: str | int,
     *,
-    username: str | None = None,
     display_name: str | None = None,
-    is_admin: bool = False,
 ) -> User:
-    user = await session.scalar(select(User).where(User.telegram_id == telegram_id))
+    normalized_id = str(external_id)
+    user = await session.scalar(select(User).where(User.external_id == normalized_id))
     if user is None:
-        user = User(
-            telegram_id=telegram_id,
-            username=username,
-            display_name=display_name,
-            is_admin=is_admin,
-        )
+        user = User(external_id=normalized_id, display_name=display_name)
         session.add(user)
     else:
-        user.username = username or user.username
         user.display_name = display_name or user.display_name
         user.is_active = True
-        user.is_admin = is_admin
     await session.commit()
     await session.refresh(user)
     return user

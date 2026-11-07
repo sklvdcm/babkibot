@@ -1,9 +1,0 @@
-ClientOnly 1
-AvoidDiskWrites 1
-DataDirectory /tmp/tor
-Log notice stdout
-
-# Reachable only inside BabkiBot's private Docker network; no host port is published.
-SocksPort 0.0.0.0:9050
-SocksPolicy accept 172.16.0.0/12
-SocksPolicy reject *

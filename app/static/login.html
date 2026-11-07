@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru" data-color-scheme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вход · Babki</title>
+  <link rel="stylesheet" href="/static/primitives-colors.css">
+  <link rel="stylesheet" href="/static/primitives-layout.css">
+  <link rel="stylesheet" href="/static/primitives-typography.css">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="login-body">
+  <main class="login-shell">
+    <div class="product-lockup" aria-label="Babki">
+      <span class="product-mark">₽</span>
+      <span>Babki</span>
+    </div>
+    <section class="login-panel" aria-labelledby="login-title">
+      <h1 id="login-title">Вход</h1>
+      <p>История расходов и месячные лимиты доступны по паролю.</p>
+      <form id="login-form">
+        <label for="password">Пароль</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+        <p class="form-error" id="login-error" role="alert" hidden></p>
+        <button class="button button-primary" type="submit">Войти</button>
+      </form>
+    </section>
+  </main>
+  <script src="/static/login.js" defer></script>
+</body>
+</html>

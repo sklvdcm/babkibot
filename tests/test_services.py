@@ -44,7 +44,7 @@ async def test_expense_reduces_remaining_budget(session):
         user=user,
         category_id=category.id,
         amount=Decimal("1500"),
-        source="telegram",
+        source="iphone_shortcut",
         idempotency_key="unique-key",
         now=now,
     )
@@ -74,7 +74,7 @@ async def test_previous_month_expense_does_not_reduce_current_budget(session):
         user=user,
         category_id=category.id,
         amount=Decimal("1000"),
-        source="telegram",
+        source="iphone_shortcut",
         idempotency_key="november-key",
         now=november,
     )

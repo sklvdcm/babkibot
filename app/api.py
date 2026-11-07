@@ -22,18 +22,20 @@ async def shortcut_user(
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing bearer token")
     supplied = authorization.removeprefix("Bearer ").strip()
-    telegram_id = next(
+    external_id = next(
         (
-            int(user_id)
+            user_id
             for user_id, token in settings.shortcut_tokens.items()
             if secrets.compare_digest(supplied, token)
         ),
         None,
     )
-    if telegram_id is None or telegram_id not in settings.allowed_telegram_ids:
+    if external_id is None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
     return await get_or_sync_user(
-        session, telegram_id, is_admin=telegram_id in settings.admin_telegram_ids
+        session,
+        external_id,
+        display_name=settings.shortcut_users.get(external_id, external_id),
     )
 
 

@@ -1,1 +1,1 @@
-"""BabkiBot application package."""
+"""Babki expense tracker."""
