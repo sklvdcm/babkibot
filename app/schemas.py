@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, model_validator
 class ExpenseCreate(BaseModel):
     amount: Decimal = Field(gt=0, max_digits=14, decimal_places=2)
     category_id: int = Field(gt=0)
-    idempotency_key: str = Field(min_length=8, max_length=128)
+    idempotency_key: str | None = Field(default=None, min_length=8, max_length=128)
 
 
 class ExpenseUpdate(BaseModel):

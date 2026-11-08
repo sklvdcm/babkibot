@@ -73,7 +73,7 @@ async def create_expense(
             category_id=payload.category_id,
             amount=payload.amount,
             source="iphone_shortcut",
-            idempotency_key=payload.idempotency_key,
+            idempotency_key=payload.idempotency_key or secrets.token_urlsafe(16),
             now=datetime.now(settings.tz),
         )
     except DomainError as error:
